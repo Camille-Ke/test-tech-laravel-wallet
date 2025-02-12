@@ -22,4 +22,6 @@ test('new users can register', function () {
 
     assertAuthenticated();
     $response->assertRedirect(route('dashboard', absolute: false));
+    // TODO trouver la bonne méthode pour tester qu'il n'y pas d'exception
+    // $response->assertSee('Dashboard');
 });

@@ -5,13 +5,14 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
-use Illuminate\Auth\Events\Registered;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Wallet;
+use Illuminate\View\View;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\Rules;
-use Illuminate\View\View;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Auth\Events\Registered;
 
 class RegisteredUserController
 {
@@ -32,6 +33,10 @@ class RegisteredUserController
             'name' => $request->name,
             'email' => strtolower($request->email),
             'password' => Hash::make($request->password),
+        ]);
+
+        Wallet::create([
+            'user_id' => $user->id,
         ]);
 
         event(new Registered($user));
