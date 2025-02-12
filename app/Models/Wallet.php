@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace App\Models;
 
 use App\Observers\WalletObserver;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 #[ObservedBy([WalletObserver::class])]
 class Wallet extends Model
@@ -17,7 +17,7 @@ class Wallet extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id'
+        'user_id',
     ];
 
     /**
@@ -34,5 +34,13 @@ class Wallet extends Model
     public function transactions(): HasMany
     {
         return $this->hasMany(WalletTransaction::class);
+    }
+
+    /**
+     * @return HasMany<RecurrentTransfer>
+     */
+    public function recurrentTransfer(): HasMany
+    {
+        return $this->hasMany(RecurrentTransfer::class, 'source_id');
     }
 }

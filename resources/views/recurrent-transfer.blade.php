@@ -1,0 +1,168 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Dashboard') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12">
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-4">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-5">
+                <div class="text-base text-gray-400">@lang('Balance')</div>
+                <div class="flex items-center pt-1">
+                    <div class="text-2xl font-bold text-gray-900">
+                        {{ \Illuminate\Support\Number::currencyCents($balance) }}
+                    </div>
+                </div>
+            </div>
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-5">
+                <h2 class="text-xl font-bold mb-6">@lang('Setup a recurrent transfer')</h2>
+                <form method="POST" action="{{ route('recurrent-transfer.create') }}" class="space-y-4">
+                    @csrf
+
+                    @if (session('recurent-transfer-status') === 'success')
+                        <div class="p-4 text-sm text-green-800 rounded-lg bg-green-50" role="alert">
+                            <span class="font-medium">@lang('Creation recurrent transfer succeed')</span>
+                        </div>
+                    @elseif (session('recurent-transfer-status') === 'error')
+                            <div class="p-4 text-sm text-red-800 rounded-lg bg-red-50" role="alert">
+                                <span class="font-medium">@lang('Error contact an admin')</span>
+                            </div>
+                    @endif
+
+                    <div>
+                        <x-input-label for="start_date" :value="__('Start date')" />
+                        <x-text-input id="start_date"
+                                      class="block mt-1 w-full"
+                                      type="date"
+                                      name="start_date"
+                                      step="1"
+                                      :value="old('start_date')"
+                                      required />
+                        <x-input-error :messages="$errors->get('start_date')" class="mt-2" />
+                    </div>
+                    <div>
+                        <x-input-label for="end_date" :value="__('End date')" />
+                        <x-text-input id="end_date"
+                                      class="block mt-1 w-full"
+                                      type="date"
+                                      name="end_date"
+                                      step="1"
+                                      :value="old('end_date')"
+                                      required />
+                        <x-input-error :messages="$errors->get('end_date')" class="mt-2" />
+                    </div>
+                    <div>
+                        <x-input-label for="frequency" :value="__('Frequency')" />
+                        <x-text-input id="frequency"
+                                      class="block mt-1 w-full"
+                                      type="number"
+                                      name="frequency"
+                                      step="1"
+                                      :value="old('frequency')"
+                                      required />
+                        <x-input-error :messages="$errors->get('frequency')" class="mt-2" />
+                    </div>
+                    <div>
+                        <x-input-label for="recipient_email" :value="__('Recipient email')" />
+                        <x-text-input id="recipient_email"
+                                      class="block mt-1 w-full"
+                                      type="email"
+                                      name="recipient_email"
+                                      :value="old('recipient_email')"
+                                      required />
+                        <x-input-error :messages="$errors->get('recipient_email')" class="mt-2" />
+                    </div>
+                    <div>
+                        <x-input-label for="amount" :value="__('Amount (€)')" />
+                        <x-text-input id="amount"
+                                      class="block mt-1 w-full"
+                                      type="number"
+                                      min="0"
+                                      step="0.01"
+                                      :value="old('amount')"
+                                      name="amount"
+                                      required />
+                        <x-input-error :messages="$errors->get('amount')" class="mt-2" />
+                    </div>
+                    <div>
+                        <x-input-label for="reason" :value="__('Reason')" />
+                        <x-text-input id="reason"
+                                      class="block mt-1 w-full"
+                                      type="text"
+                                      :value="old('reason')"
+                                      name="reason"
+                                      required />
+                        <x-input-error :messages="$errors->get('reason')" class="mt-2" />
+                    </div>
+
+                    <div class="flex justify-end mt-4">
+                        <x-primary-button>
+                            {{ __('Send my money !') }}
+                        </x-primary-button>
+                    </div>
+                </form>
+            </div>
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-5">
+                <h2 class="text-xl font-bold mb-6">@lang('Transactions history')</h2>
+                <table class="w-full text-sm text-left text-gray-500 border border-gray-200">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-6 py-3">
+                            @lang('ID')
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            @lang('Reason')
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            @lang('Start date')
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            @lang('End date')
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            @lang('Frequency')
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            @lang('Amount')
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                            @lang('Target')
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    @foreach($recurrentTransfers as $transfer)
+                        <tr class="bg-white border-b">
+                            <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
+                                {{$transfer->id}}
+                            </th>
+                            <td class="px-6 py-4">
+                                {{$transfer->reason}}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{$transfer->start_date}}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{$transfer->end_date}}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{$transfer->frequency}}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{Number::currencyCents($transfer->amount)}}
+                            </td>
+                            <td class="px-6 py-4">
+                                {{$transfer->target->email}}
+                            </td>
+                            <td class="px-6 py-4">
+                                <a href="{{ route("recurrent-transfer.delete",[$transfer]) }}">Delete</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</x-app-layout>

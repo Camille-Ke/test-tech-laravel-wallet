@@ -2,12 +2,10 @@
 
 declare(strict_types=1);
 
+use App\Mail\WalletBalanceLow;
 use App\Models\User;
 use App\Models\Wallet;
-use App\Mail\WalletBalanceLow;
 use Illuminate\Support\Facades\Mail;
-
-
 
 test('notification send when balance is < 10', function () {
     Mail::fake();
