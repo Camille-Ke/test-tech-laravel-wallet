@@ -9,6 +9,7 @@ use Illuminate\Console\Command;
 
 class ExecuteRecurringTransfer extends Command
 {
+    //TODO ajout commande au scheduler
     /**
      * The name and signature of the console command.
      *
@@ -33,11 +34,11 @@ class ExecuteRecurringTransfer extends Command
 
         foreach ($transfers as $transfer) {
             if (! $transfer->last_executed_date) {
-                // Execute transfer
+                // TODO Execute transfer
                 $transfer->last_executed_date = now();
                 $transfer->save();
             } elseif ($transfer->last_executed_date->diffInDays(now()) <= $transfer->frequency) {
-                // Execute transfer
+                // TODO Execute transfer
                 $transfer->last_executed_date = now();
                 $transfer->save();
             }
